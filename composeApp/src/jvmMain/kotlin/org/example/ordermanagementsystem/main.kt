@@ -1,13 +1,27 @@
 package org.example.ordermanagementsystem
 
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import org.example.ordermanagementsystem.data.repository.FakeOrderRepository
+import org.example.ordermanagementsystem.ui.OrderDashboard
+import org.example.ordermanagementsystem.viewModel.OrderViewModel
 
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
-        title = "ordermanagementsystem",
+        title = "Order Management System",
     ) {
-        App()
+        val viewModel = remember {
+            OrderViewModel(FakeOrderRepository())
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.loadOrders()
+        }
+
+        OrderDashboard(viewModel)
+//        App()
     }
 }
