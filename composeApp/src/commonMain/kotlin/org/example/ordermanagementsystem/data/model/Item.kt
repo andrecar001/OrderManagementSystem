@@ -1,5 +1,8 @@
-package org.example.ordermanagementsystem
+package org.example.ordermanagementsystem.data.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Item (
     val name: String,
     val quantity: Int,
