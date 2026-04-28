@@ -1,16 +1,13 @@
-package org.example.ordermanagementsystem.domain
+package org.example.ordermanagementsystem.data.repository
 
 import android.content.Context
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import org.example.ordermanagementsystem.data.mappers.toOrder
+import org.example.ordermanagementsystem.data.mapper.toOrder
 import org.example.ordermanagementsystem.data.parser.JSONParser
 import org.example.ordermanagementsystem.data.parser.OrderImporter
-import org.example.ordermanagementsystem.data.repository.BaseOrderRepository
-import org.example.ordermanagementsystem.data.repository.OrderRepository
 import org.example.ordermanagementsystem.domain.model.Order
 import java.io.File
-import kotlin.io.extension
 
 class OrderRepositoryAndroid(
     private val context: Context,
@@ -78,7 +75,7 @@ class OrderRepositoryAndroid(
 
                 incomingOrders.add(order)
 
-                file.copyTo(File(loadedDirectory,file.name), overwrite = true)
+                file.copyTo(File(loadedDirectory, file.name), overwrite = true)
                 file.delete()
             } catch( e: Exception){
                 println("Failed to load incoming orders: ${e.message}")

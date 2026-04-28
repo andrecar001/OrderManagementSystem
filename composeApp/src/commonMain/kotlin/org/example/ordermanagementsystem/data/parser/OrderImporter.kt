@@ -1,6 +1,6 @@
 package org.example.ordermanagementsystem.data.parser
 
-import org.example.ordermanagementsystem.domain.model.ParsedOrder
+import org.example.ordermanagementsystem.data.parser.ParsedOrder
 
 class OrderImporter (
     private val parsers: List<OrderParser>

@@ -1,11 +1,10 @@
-package org.example.ordermanagementsystem.data.mappers
+package org.example.ordermanagementsystem.data.mapper
 
-import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderDTO
 import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWrapper
 import org.example.ordermanagementsystem.data.data_transfer_objects.XMLOrderDTO
 import org.example.ordermanagementsystem.domain.model.Item
 import org.example.ordermanagementsystem.domain.model.Order
-import org.example.ordermanagementsystem.domain.model.ParsedOrder
+import org.example.ordermanagementsystem.data.parser.ParsedOrder
 import kotlin.time.Clock
 
 fun JSONOrderWrapper.toOrder(id: Int) : Order {

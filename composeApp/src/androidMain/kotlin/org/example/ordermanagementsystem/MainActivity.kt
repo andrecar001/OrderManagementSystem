@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.json.Json
-import org.example.ordermanagementsystem.domain.OrderRepositoryAndroid
+import org.example.ordermanagementsystem.data.repository.OrderRepositoryAndroid
 import org.example.ordermanagementsystem.ui.dashboards.OrderDashboardForAndroid
 
 import org.example.ordermanagementsystem.viewModel.OrderViewModel

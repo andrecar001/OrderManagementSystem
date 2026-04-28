@@ -1,11 +1,4 @@
-package org.example.ordermanagementsystem.domain
-
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import org.example.ordermanagementsystem.data.FakeOrderData
-import org.example.ordermanagementsystem.domain.model.Order
-import org.example.ordermanagementsystem.data.repository.OrderRepository
-import java.io.File
+package org.example.ordermanagementsystem.data.repository
 
 /*
 class FakeOrderRepository : OrderRepository {
