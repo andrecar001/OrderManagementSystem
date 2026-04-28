@@ -20,6 +20,7 @@ fun OrderComponent(
     onComplete: () -> Unit,
     onCancel: () -> Unit,
     onReinstate: () -> Unit,
+
     modifier: Modifier = Modifier
 ){
 
@@ -35,8 +36,10 @@ fun OrderComponent(
             selectedWarehouse = selectedWarehouse,
             warehouseOptions = listOf(1,2,3),
             onWarehouseChange = { selectedWarehouse = it },
-            onProcess = { warehouse ->
-                onProcess(warehouse)
+            onProcess = {
+                selectedWarehouse?.let { warehouse ->
+                    onProcess(warehouse)
+                }
             },
             onComplete = onComplete,
             onReinstate = onReinstate,

@@ -15,11 +15,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun OrderActionsColumn(
-    selectedWarehouse: Int,
+    selectedWarehouse: Int?,
     warehouseOptions: List<Int>,
 
-    onWarehouseChange: (Int) -> Unit,
-    onProcess: (Int) -> Unit,
+    onWarehouseChange: (Int?) -> Unit,
+    onProcess: () -> Unit,
     onComplete: () -> Unit,
     onCancel: () -> Unit,
     onReinstate: () -> Unit,
@@ -50,8 +50,8 @@ fun OrderActionsColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = { onProcess(selectedWarehouse) },
-                enabled = canProcess,
+                onClick =  onProcess ,
+                enabled = canProcess && selectedWarehouse != null,
             ) { Text("Process") }
             Button(
                 onClick = { onComplete() },

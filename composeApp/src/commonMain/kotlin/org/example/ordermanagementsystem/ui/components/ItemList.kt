@@ -1,6 +1,7 @@
 package org.example.ordermanagementsystem.ui.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,7 @@ fun ItemList(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
+            .fillMaxHeight()
             .height(200.dp),
     ) {
         itemsIndexed(items) { index, item ->

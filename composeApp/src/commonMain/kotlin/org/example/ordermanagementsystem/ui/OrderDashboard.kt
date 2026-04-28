@@ -54,6 +54,7 @@ fun OrderDashboard(viewModel: OrderViewModel) {
                 orders = filteredOrders,
                 selectedWarehouseFilter = viewModel.selectedWarehouseFilter,
                 onSelect = { viewModel.selectOrder(it) },
+                onRefresh = { viewModel.loadIncomingOrders() },
                 onWarehouseChange = { viewModel.setWarehouseFilter(it) },
                 modifier = Modifier.weight(1f)
             )
