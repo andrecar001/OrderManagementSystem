@@ -25,11 +25,11 @@ data class Order (
         if (stage == "in progress") copy(stage = "complete") else this
 
     fun cancel() : Order =
-        if (stage != "complete") copy(stage = "canceled") else this
+        if (stage != "complete") copy(stage = "canceled", warehouseNumber = null) else this
 
     fun reinstate() : Order =
         if (stage == "canceled") {
-            copy(stage = "incoming", warehouseNumber = -1)
+            copy(stage = "incoming", warehouseNumber = null)
         } else this
 
 

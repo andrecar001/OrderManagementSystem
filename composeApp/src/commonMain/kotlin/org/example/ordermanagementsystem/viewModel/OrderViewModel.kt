@@ -23,19 +23,22 @@ class OrderViewModel (
     var selectedWarehouseFilter by mutableStateOf<Int?>(null)
         private set
 
-//    var selectedOrderWarehouse by remember { mutableStateOf(order.warehouse) }
-
-    private val _selectedOrderWarehouse = MutableStateFlow<Int>(-1)
-
-    val selectedOrderWarehouse: StateFlow<Int> = _selectedOrderWarehouse
+    private val _selectedOrderWarehouse = MutableStateFlow<Int?>(null)
+    val selectedOrderWarehouse: StateFlow<Int?> = _selectedOrderWarehouse
 
 
     init {
-        loadOrders()
+        loadState()
     }
-    fun loadOrders() {
+    fun loadState() {
         viewModelScope.launch {
-            _orders.value = repository.getOrders()
+            _orders.value = repository.loadOrders()
+        }
+    }
+
+    fun loadIncomingOrders() {
+        viewModelScope.launch {
+            _orders.value = repository.mergeIncomingOrders()
         }
     }
 
@@ -44,7 +47,7 @@ class OrderViewModel (
     }
 
 
-    private fun updateOrders(transform: (List<Order>) -> List<Order>) {
+   /* private fun updateOrders(transform: (List<Order>) -> List<Order>) {
         val updatedList = transform(_orders.value)
 
         _orders.value = updatedList
@@ -52,7 +55,7 @@ class OrderViewModel (
         viewModelScope.launch{
             repository.saveOrders(updatedList)
         }
-    }
+    }*/
 
     private fun updateOrder(orderNumber: Int, transform: (Order) -> Order) {
         val updatedList = _orders.value.map { order ->
@@ -90,10 +93,6 @@ class OrderViewModel (
         updateOrder(orderNumber) { it.reinstate() }
     }
 
-    fun setWarehouseFilter(warehouse: Int?) {
-        selectedWarehouseFilter = warehouse
-    }
-
     fun canProcess(order: Order): Boolean =
         order.stage == "incoming"
 
@@ -106,12 +105,10 @@ class OrderViewModel (
 
     fun canReinstate(order: Order): Boolean =
         order.stage == "canceled"
-
-/*    fun loadJSON(json: String) {
-        _orders.value = loadOrders.fromJSON(json)
+    fun setWarehouseFilter(warehouse: Int?) {
+        selectedWarehouseFilter = warehouse
     }
-    fun loadXML(xml: String) {
-        _orders.value = loadOrders.fromXML(xml)
-    }*/
+
+
 
 }
