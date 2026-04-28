@@ -7,6 +7,7 @@ import org.example.ordermanagementsystem.domain.model.Order
 import org.example.ordermanagementsystem.data.repository.OrderRepository
 import java.io.File
 
+/*
 class FakeOrderRepository : OrderRepository {
 
     private val file: File by lazy {
@@ -16,9 +17,9 @@ class FakeOrderRepository : OrderRepository {
     }
 
 
-    override suspend fun getOrders(): List<Order> = FakeOrderData.orders.toMutableList()
+    override suspend fun loadOrders(): List<Order> = FakeOrderData.orders.toMutableList()
     override suspend fun saveOrders(orders: List<Order>) {
         val json = Json {prettyPrint = true}
         file.writeText(json.encodeToString(orders))
     }
-}
+}*/

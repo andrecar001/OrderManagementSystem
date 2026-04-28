@@ -5,19 +5,36 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.example.ordermanagementsystem.domain.model.Order
 
 abstract class BaseOrderRepository : OrderRepository {
-    protected val _orders = MutableStateFlow<List<Order>>(emptyList())
-    val orders = _orders.asStateFlow()
 
-    override fun addOrder(order: Order) {
-        _orders.value += order
-    }
 
-    override fun updateOrder(order: Order) {
-        _orders.value = _orders.value.map {
-            if (it.orderNumber == order.orderNumber) order else it
+
+    override suspend fun mergeIncomingOrders(): List<Order> {
+        val current = loadOrders()
+        val incoming = loadIncomingOrders()
+
+        var nextId = nextId(current)
+
+        val incomingOrders = incoming.map { order ->
+            if (order.orderNumber == 0) {
+                order.copy(orderNumber = nextId++)
+            } else order
         }
+
+        val merged = (current + incomingOrders).distinctBy { it.orderNumber }
+
+        saveOrders(merged)
+        return merged
+    }
+    suspend fun addOrder(order: Order): List<Order> {
+        val current = loadOrders()
+        val newOrder = order.copy(orderNumber = nextId(current))
+
+        val updated = current + newOrder
+        saveOrders(updated)
+
+        return updated
     }
 
-    override fun nextId(): Int =
-        (_orders.value.maxOfOrNull { it.orderNumber } ?: -1) + 1
+    protected fun nextId(orders: List<Order>): Int =
+        (orders.maxOfOrNull { it.orderNumber } ?: -1) + 1
 }

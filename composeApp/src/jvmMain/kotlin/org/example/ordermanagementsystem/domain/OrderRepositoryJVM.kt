@@ -8,6 +8,7 @@ import org.example.ordermanagementsystem.data.repository.OrderRepository
 import java.io.File
 import kotlinx.serialization.json.Json
 import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderDTO
+import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWrapper
 import org.example.ordermanagementsystem.data.mappers.toOrder
 import org.example.ordermanagementsystem.data.repository.BaseOrderRepository
 import java.nio.file.FileSystems
@@ -18,84 +19,91 @@ import java.nio.file.StandardWatchEventKinds
 class OrderRepositoryJVM: BaseOrderRepository() {
 
 
-    private val file: File by lazy {
-        val directory = File(System.getProperty("user.home"),".order_management_system")
-        if (!directory.exists()) directory.mkdirs()
-        File(directory, "state.json")
+    private var cache: List<Order>? = null
+    private val baseDirectory = File(
+        System.getProperty("user.home"),
+        ".order_management_system"
+    )
+
+    private val stateFile = File(baseDirectory, "state.json")
+    private val incomingDirectory = File(baseDirectory, "incoming")
+    private val loadedDirectory = File(baseDirectory, "loaded")
+
+    private val json = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
     }
 
-    private val json = Json { prettyPrint = true }
-
-
-    suspend fun loadInitialOrders() {
-        if (!file.exists()) return
-
-        val loaded = json.decodeFromString<List<Order>>(file.readText())
-        _orders.value = loaded
+    init {
+        confirmDirectory()
     }
 
+    private fun confirmDirectory() {
+        if(!baseDirectory.exists()) baseDirectory.mkdirs()
+
+        if(!incomingDirectory.exists()) incomingDirectory.mkdirs()
+        if(!loadedDirectory.exists()) loadedDirectory.mkdirs()
 
 
-    override suspend fun getOrders(): List<Order> {
+        if(!stateFile.exists()) stateFile.writeText("[]")
 
+        println("Confirming order storage created")
+    }
 
-        if(!file.exists()) return emptyList()
-        val loaded = json.decodeFromString<List<Order>>(file.readText())
+    override suspend fun loadOrders(): List<Order> {
+        if (cache != null) return cache!!
+        if(!stateFile.exists()) return emptyList()
+
+        val loaded = json.decodeFromString<List<Order>>(stateFile.readText())
+        cache = loaded
         return loaded
     }
 
+
     override suspend fun saveOrders(orders: List<Order>) {
-        file.writeText(json.encodeToString(orders))
+        cache = orders
+        stateFile.writeText(json.encodeToString(orders))
     }
 
-    override fun addOrder(order: Order) {
-        super.addOrder(order)
-        saveSync()
-    }
+    override suspend fun loadIncomingOrders(): List<Order> {
+        val current = loadOrders()
+        var next = nextId(current)
 
-    override fun updateOrder(order: Order) {
-        super.updateOrder(order)
-        saveSync()
-    }
+        val files = incomingDirectory.listFiles()
+            ?.filter { it.extension in listOf("json", "xml") }
+            ?: return emptyList()
 
+        val result = mutableListOf<Order>()
 
-    fun loadJsonOrder(newJSON: String) {
-        val dto = json.decodeFromString<JSONOrderDTO>(newJSON)
-        val order = dto.toOrder(id = nextId())
-    }
-
-    private fun saveSync() {
-        file.writeText(json.encodeToString(_orders.value))
-    }
-
-    fun startWatchingFolder(onNewFile: (File) -> Unit) {
-        val path = file.parentFile.toPath()
-
-        val watchService = FileSystems.getDefault().newWatchService()
-
-        path.register(watchService, StandardWatchEventKinds.ENTRY_MODIFY)
-
-        Thread {
-            while (true) {
-                val key = watchService.take()
-
-                for (event in key.pollEvents()) {
-                    val filename = event.context() as Path
-                    val newFile = path.resolve(filename).toFile()
-
-                    if(newFile.extension == "json") {
-                        onNewFile(newFile)
-                    }
+        for (file in files) {
+            try {
+                val order = when (file.extension.lowercase()) {
+                    "json" -> parseJson(file, next++)
+                    else -> null
                 }
 
-                key.reset()
+                if (order != null) {
+                    result.add(order)
+
+                    moveFileToLoaded(file)
+                }
+            } catch (e: Exception) {
+                println("Failed to load order ${file.name}: ${e.message}")
             }
-        }.start()
+        }
+        return result
     }
 
-    fun handleNewFile(file: File) {
-        val order = json.decodeFromString<Order>(file.readText())
-
-        addOrder(order)
+    private fun moveFileToLoaded(file: File) {
+        val target = File(loadedDirectory, file.name)
+        file.copyTo(target, overwrite = true)
+        file.delete()
     }
+
+    private fun parseJson(file: File, id: Int) : Order {
+        val dto = json.decodeFromString<JSONOrderWrapper>(file.readText())
+        return dto.toOrder(id)
+    }
+
+
 }
