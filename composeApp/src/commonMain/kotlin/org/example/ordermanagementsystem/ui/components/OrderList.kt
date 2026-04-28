@@ -9,11 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.example.ordermanagementsystem.data.model.Order
+import org.example.ordermanagementsystem.domain.model.Order
+import org.example.ordermanagementsystem.ui.stageColor
+import org.example.ordermanagementsystem.ui.toFormattedDate
+import org.example.ordermanagementsystem.ui.toPriceString
 
 
 @Composable
@@ -24,15 +28,22 @@ fun OrderDetailsRow(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = stageColor(order.stage)
+        )
 
     ) {
         Column (
             modifier = Modifier
-                .clickable { onClick() }
-                .padding(8.dp)
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(16.dp)
+
         ) {
-            Text("Order #${order.orderNumber} Stage: ${order.stage} Items: ${order.items.size}")
+            Text("🏠 ${order.warehouseNumber}, Order #️${order.orderNumber}, Stage: ${order.stage}, Items: ${order.items.size}, Total: 💲${order.totalPrice().toPriceString()}")
+
+            Text("📅 ${order.date.toFormattedDate()}")
         }
     }
 }
@@ -57,8 +68,9 @@ fun OrderList(
 @Composable
 fun OrderListComponent(
     orders: List<Order>,
+    selectedWarehouseFilter: Int?,
     onSelect: (Order) -> Unit,
-    onWarehouseChange: (Int) -> Unit,
+    onWarehouseChange: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -68,8 +80,16 @@ fun OrderListComponent(
         Row {
             Text(text = "Orders")
             Spacer(modifier = Modifier.weight(1f).padding(16.dp))
+            labeledDropDown(
+                label = "Filter",
+                selected = selectedWarehouseFilter,
+                options = listOf(null, 1, 2, 3),  //Possibly make this list parameter
+                displayText = {
+                    it?.let { "Warehouse $it" } ?: "All"
+                },
+                onSelected = onWarehouseChange
+            )
 
-            WarehouseDropDownMenu(listOf(1,2,3), onWarehouseChange, 1 )
         }
         OrderList(orders = orders, onSelect = onSelect)
     }

@@ -5,7 +5,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import org.example.ordermanagementsystem.data.model.Order
+import org.example.ordermanagementsystem.domain.model.Order
+import org.example.ordermanagementsystem.ui.toFormattedDate
+import org.example.ordermanagementsystem.ui.toPriceString
 
 @Composable
 fun OrderDetailsText(
@@ -16,9 +18,9 @@ fun OrderDetailsText(
         Order number: ${order.orderNumber}
         Order type: ${order.type}
         Order stage: ${order.stage}
-        Order Date: ${order.totalPrice()}
+        Order Date: ${order.date.toFormattedDate()}
         Warehouse number: ${order.warehouseNumber}
-        Total price: $${order.totalPrice()}
+        Total price: $${order.totalPrice().toPriceString()}
     """.trimIndent()
 
     OutlinedTextField(
