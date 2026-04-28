@@ -1,4 +1,4 @@
-package org.example.ordermanagementsystem.data.model
+package org.example.ordermanagementsystem.domain.model
 
 import kotlinx.serialization.Serializable
 
