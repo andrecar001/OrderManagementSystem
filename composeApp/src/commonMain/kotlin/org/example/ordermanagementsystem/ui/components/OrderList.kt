@@ -99,6 +99,6 @@ fun OrderListComponent(
             )
 
         }
-        OrderList(orders = orders, onSelect = onSelect)
+        OrderList(orders = orders, onSelect = onSelect, modifier = modifier)
     }
 }

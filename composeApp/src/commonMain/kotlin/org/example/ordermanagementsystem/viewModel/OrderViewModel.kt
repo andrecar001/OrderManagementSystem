@@ -29,6 +29,7 @@ class OrderViewModel (
 
     init {
         loadState()
+
     }
     fun loadState() {
         viewModelScope.launch {

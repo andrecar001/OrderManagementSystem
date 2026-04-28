@@ -11,24 +11,20 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.example.ordermanagementsystem.ui.components.OrderList
 import org.example.ordermanagementsystem.ui.components.OrderComponent
 import org.example.ordermanagementsystem.ui.components.OrderListComponent
 import org.example.ordermanagementsystem.viewModel.OrderViewModel
 
 @Composable
-fun OrderDashboard(viewModel: OrderViewModel) {
+fun OrderDashboardDesktop(viewModel: OrderViewModel) {
     val orders by viewModel.orders.collectAsState()
     val selectedOrder by viewModel.selectedOrder.collectAsState()
-//    var selectedProcessWarehouse by remember { mutableStateOf(selectedOrder.warehouseNumber) }
+
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(

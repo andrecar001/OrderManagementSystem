@@ -5,6 +5,7 @@ import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWra
 import org.example.ordermanagementsystem.data.data_transfer_objects.XMLOrderDTO
 import org.example.ordermanagementsystem.domain.model.Item
 import org.example.ordermanagementsystem.domain.model.Order
+import org.example.ordermanagementsystem.domain.model.ParsedOrder
 import kotlin.time.Clock
 
 fun JSONOrderWrapper.toOrder(id: Int) : Order {
@@ -35,3 +36,12 @@ fun XMLOrderDTO.toOrder(id: Int,):  Order {
 
 
 }
+
+fun ParsedOrder.toOrder(id: Int) = Order (
+    orderNumber = orderNumber ?: id,
+    type = type,
+    stage = "incoming",
+    warehouseNumber = null,
+    date = date,
+    items = items
+)

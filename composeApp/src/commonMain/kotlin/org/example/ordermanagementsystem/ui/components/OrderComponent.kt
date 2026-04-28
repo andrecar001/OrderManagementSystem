@@ -57,7 +57,7 @@ fun OrderComponent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ItemList(items = order.items)
+        ItemList(items = order.items, modifier = modifier)
 
 
 
