@@ -3,7 +3,6 @@ package org.example.ordermanagementsystem.data.parser
 import kotlinx.serialization.json.Json
 import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWrapper
 import org.example.ordermanagementsystem.domain.model.Item
-import org.example.ordermanagementsystem.data.parser.ParsedOrder
 
 class JSONParser(
     private val json: Json
@@ -13,8 +12,8 @@ class JSONParser(
     override fun canParse(fileName: String) =
         fileName.endsWith(".json")
 
-    override fun parse(fileName: String): ParsedOrder {
-        val dto = json.decodeFromString<JSONOrderWrapper>(fileName)
+    override fun parse(content: String): ParsedOrder {
+        val dto = json.decodeFromString<JSONOrderWrapper>(content)
 
         return ParsedOrder(
             type = dto.order.type,

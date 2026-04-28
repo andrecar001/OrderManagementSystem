@@ -5,7 +5,7 @@ actual class XMLParser : OrderParser {
         return fileName.endsWith(".xml")
     }
 
-    actual override fun parse(fileName: String): ParsedOrder {
+    actual override fun parse(content: String): ParsedOrder {
         TODO("Not yet implemented")
         //Figure this out too pls
     }
