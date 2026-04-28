@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.1.20"
 }
 
 kotlin {
@@ -46,7 +47,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(compose.materialIconsExtended)
-            implementation("org.jetbrains.compose.material:material-icons-extended")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+            implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.17.0")
+            implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
 
         }
         commonTest.dependencies {
@@ -55,6 +60,7 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
         }
     }
 }
