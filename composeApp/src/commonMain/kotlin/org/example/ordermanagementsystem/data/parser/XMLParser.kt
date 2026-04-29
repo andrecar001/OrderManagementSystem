@@ -6,7 +6,12 @@ class XMLParser(): OrderParser {
     }
 
     override fun parse(content: String): ParsedOrder {
-        TODO("Not yet implemented")
-        //Figure this out pls
+        // extract id from xml
+        val id = Regex("<id>(.*?)</id>", RegexOption.DOT_MATCHES_ALL)
+            .find(content)
+            ?.groupValues?.get(1)
+            ?.trim()
+            ?.toIntOrNull()
+
     }
 }
