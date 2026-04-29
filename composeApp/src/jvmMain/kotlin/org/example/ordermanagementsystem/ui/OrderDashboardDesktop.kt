@@ -21,6 +21,11 @@ import org.example.ordermanagementsystem.ui.components.OrderListComponent
 import org.example.ordermanagementsystem.viewModel.OrderViewModel
 
 
+/**
+ * Order dashboard desktop
+ *
+ * @param viewModel
+ */
 @Composable
 fun OrderDashboardDesktop(viewModel: OrderViewModel) {
     val orders by viewModel.orders.collectAsState()
@@ -36,10 +41,7 @@ fun OrderDashboardDesktop(viewModel: OrderViewModel) {
                 text = "Order Management System"
             )
             Spacer(modifier = Modifier.weight(1f).padding(16.dp))
-            Button(onClick = {}) {
-                Text("Warehouse Stats")
-            }
-            Spacer(modifier = Modifier.weight(1f).padding(32.dp))
+
         }
 
         Row {
