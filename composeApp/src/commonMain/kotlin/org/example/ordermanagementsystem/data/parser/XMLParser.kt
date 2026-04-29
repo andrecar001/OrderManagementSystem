@@ -1,6 +1,7 @@
 package org.example.ordermanagementsystem.data.parser
 
 import org.example.ordermanagementsystem.domain.model.Item
+import kotlin.time.Clock
 
 class XMLParser() : OrderParser {
 
@@ -45,7 +46,7 @@ class XMLParser() : OrderParser {
         // orderimporter will take this and later convert it into a full Order object
         return ParsedOrder(
             type = type,
-            date = 0L, // xml doesnt have date so just defaulting it
+            date = Clock.System.now().toEpochMilliseconds(), // xml doesnt have date so use current time
             items = items,
             orderNumber = id
         )
