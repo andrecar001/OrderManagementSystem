@@ -16,6 +16,7 @@ class JSONParser(
         val dto = json.decodeFromString<JSONOrderWrapper>(content)
 
         return ParsedOrder(
+            orderNumber = 0,
             type = dto.order.type,
             date = dto.order.order_date,
             items = dto.order.items.map {

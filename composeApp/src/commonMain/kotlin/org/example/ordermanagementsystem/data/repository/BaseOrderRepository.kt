@@ -8,6 +8,7 @@ abstract class BaseOrderRepository : OrderRepository {
 
 
 
+
     override suspend fun mergeIncomingOrders(): List<Order> {
         val current = loadOrders()
         val incoming = loadIncomingOrders()
@@ -16,11 +17,13 @@ abstract class BaseOrderRepository : OrderRepository {
 
         val incomingOrders = incoming.map { order ->
             if (order.orderNumber == 0) {
-                order.copy(orderNumber = nextId++)
+                order.copy(orderNumber = ++nextId)
             } else order
         }
 
-        val merged = (current + incomingOrders).distinctBy { it.orderNumber }
+        val merged = (current + incomingOrders)
+            .distinctBy { it.orderNumber }
+            .sortedBy { it.orderNumber }
 
         saveOrders(merged)
         return merged

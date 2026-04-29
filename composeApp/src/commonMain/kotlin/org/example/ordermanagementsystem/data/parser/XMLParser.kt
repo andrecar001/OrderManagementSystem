@@ -12,7 +12,7 @@ class XMLParser() : OrderParser {
     override fun parse(content: String): ParsedOrder {
 
         // pulling the id from the xml string so we can use it as orderNumber later
-        val id = Regex("<id>(.*?)</id>", RegexOption.DOT_MATCHES_ALL)
+        val id = Regex("<Order[^>]*id=\"(\\d+)\"")
             .find(content)
             ?.groupValues
             ?.getOrNull(1)
@@ -20,7 +20,7 @@ class XMLParser() : OrderParser {
             ?.toIntOrNull()
 
         // getting the type from xml (same idea as jsonparser, just manually)
-        val type = Regex("<type>(.*?)</type>", RegexOption.DOT_MATCHES_ALL)
+        val type = Regex("<OrderType>(.*?)</OrderType>")
             .find(content)
             ?.groupValues
             ?.getOrNull(1)
@@ -29,8 +29,7 @@ class XMLParser() : OrderParser {
 
         // this finds every <item> block inside the xml
         val itemRegex = Regex(
-            "<item>\\s*<name>(.*?)</name>\\s*<price>(.*?)</price>\\s*<quantity>(.*?)</quantity>\\s*</item>",
-            RegexOption.DOT_MATCHES_ALL
+            "<Item[^>]*type=\"(.*?)\">\\s*<Price[^>]*>(.*?)</Price>\\s*<Quantity>(.*?)</Quantity>\\s*</Item>",
         )
 
         // turning each xml item into an Item object (this is what the system actually uses)
