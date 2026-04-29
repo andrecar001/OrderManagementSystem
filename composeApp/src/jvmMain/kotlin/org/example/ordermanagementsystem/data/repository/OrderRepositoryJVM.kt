@@ -2,8 +2,10 @@ package org.example.ordermanagementsystem.data.repository
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWrapper
 import org.example.ordermanagementsystem.data.mapper.toOrder
+import org.example.ordermanagementsystem.data.parser.JSONParser
+import org.example.ordermanagementsystem.data.parser.OrderImporter
+import org.example.ordermanagementsystem.data.parser.XMLParser
 import org.example.ordermanagementsystem.domain.model.Order
 import java.io.File
 
@@ -24,6 +26,10 @@ class OrderRepositoryJVM: BaseOrderRepository() {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
+
+    private val importer = OrderImporter(
+        listOf(JSONParser(json), XMLParser()) // added xml parser
+    )
 
     init {
         confirmDirectory()
@@ -68,16 +74,14 @@ class OrderRepositoryJVM: BaseOrderRepository() {
 
         for (file in files) {
             try {
-                val order = when (file.extension.lowercase()) {
-                    "json" -> parseJson(file, next++)
-                    else -> null
-                }
+                val parsed = importer.parse(file.name, file.readText()) // parses json or xml
+                    ?: continue
 
-                if (order != null) {
-                    result.add(order)
+                val order = parsed.toOrder(next++) // turns parsedorder into order
 
-                    moveFileToLoaded(file)
-                }
+                result.add(order)
+
+                moveFileToLoaded(file)
             } catch (e: Exception) {
                 println("Failed to load order ${file.name}: ${e.message}")
             }
@@ -90,11 +94,5 @@ class OrderRepositoryJVM: BaseOrderRepository() {
         file.copyTo(target, overwrite = true)
         file.delete()
     }
-
-    private fun parseJson(file: File, id: Int) : Order {
-        val dto = json.decodeFromString<JSONOrderWrapper>(file.readText())
-        return dto.toOrder(id)
-    }
-
 
 }

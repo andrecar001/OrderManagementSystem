@@ -19,7 +19,7 @@ class OrderRepositoryAndroid(
     private val stateFile = File(context.filesDir, "state.json")
 
     private val importer = OrderImporter(
-        listOf(JSONParser(json))
+        listOf(JSONParser(json), XMLParser()) // added xml parser
     )
 
     init {
@@ -52,7 +52,7 @@ class OrderRepositoryAndroid(
 
     override suspend fun loadIncomingOrders(): List<Order> {
         val files = incomingDirectory.listFiles()
-            ?.filter { it.extension == "json" }
+            ?.filter { it.extension.lowercase() in listOf("json", "xml") } // allows json and xml files
             ?: return emptyList()
 
         val current = loadOrders()
