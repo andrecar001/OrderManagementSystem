@@ -1,17 +1,53 @@
 package org.example.ordermanagementsystem.data.parser
 
-class XMLParser(): OrderParser {
+import org.example.ordermanagementsystem.domain.model.Item
+
+class XMLParser() : OrderParser {
+
     override fun canParse(fileName: String): Boolean {
-        return fileName.endsWith(".xml")
+        return fileName.endsWith(".xml") // checks if this parser should handle the file (used by orderimporter)
     }
 
     override fun parse(content: String): ParsedOrder {
-        // extract id from xml
+
+        // pulling the id from the xml string so we can use it as orderNumber later
         val id = Regex("<id>(.*?)</id>", RegexOption.DOT_MATCHES_ALL)
             .find(content)
-            ?.groupValues?.get(1)
+            ?.groupValues
+            ?.getOrNull(1)
             ?.trim()
             ?.toIntOrNull()
 
+        // getting the type from xml (same idea as jsonparser, just manually)
+        val type = Regex("<type>(.*?)</type>", RegexOption.DOT_MATCHES_ALL)
+            .find(content)
+            ?.groupValues
+            ?.getOrNull(1)
+            ?.trim()
+            ?: ""
+
+        // this finds every <item> block inside the xml
+        val itemRegex = Regex(
+            "<item>\\s*<name>(.*?)</name>\\s*<price>(.*?)</price>\\s*<quantity>(.*?)</quantity>\\s*</item>",
+            RegexOption.DOT_MATCHES_ALL
+        )
+
+        // turning each xml item into an Item object (this is what the system actually uses)
+        val items = itemRegex.findAll(content).map { match ->
+            Item(
+                name = match.groupValues[1].trim(), // name from xml
+                quantity = match.groupValues[3].trim().toIntOrNull() ?: 0, // quantity from xml
+                price = match.groupValues[2].trim().toDoubleOrNull() ?: 0.0 // price from xml
+            )
+        }.toList()
+
+        // making a parsedorder (this is the same format jsonparser returns)
+        // orderimporter will take this and later convert it into a full Order object
+        return ParsedOrder(
+            type = type,
+            date = 0L, // xml doesnt have date so just defaulting it
+            items = items,
+            orderNumber = id
+        )
     }
 }
