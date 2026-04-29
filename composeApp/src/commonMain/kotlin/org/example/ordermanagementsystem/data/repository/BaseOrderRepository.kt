@@ -13,12 +13,15 @@ abstract class BaseOrderRepository : OrderRepository {
         val current = loadOrders()
         val incoming = loadIncomingOrders()
 
-        var nextId = nextId(current)
+        var nextId = (current.maxOfOrNull { it.orderNumber } ?: 0)
 
         val incomingOrders = incoming.map { order ->
             if (order.orderNumber == 0) {
                 order.copy(orderNumber = ++nextId)
-            } else order
+            } else {
+                nextId = maxOf(nextId, order.orderNumber)
+                order
+            }
         }
 
         val merged = (current + incomingOrders)

@@ -2,6 +2,8 @@ package org.example.ordermanagementsystem.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -30,7 +32,9 @@ fun OrderComponent(
     Column(
         modifier = modifier
             .padding(16.dp)
+            .fillMaxSize()
     ) {
+
 
         OrderActionsColumn(
             selectedWarehouse = selectedWarehouse,
@@ -48,16 +52,22 @@ fun OrderComponent(
             canProcess = order.stage == "incoming",
             canReinstate = order.stage == "canceled",
             canComplete = order.stage == "in progress",
-            canCancel = order.stage == "incoming" || order.stage == "in progress"
+            canCancel = order.stage == "incoming" || order.stage == "in progress",
+            modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(16.dp))
+
 
         OrderDetailsText(order = order)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ItemList(items = order.items, modifier = modifier)
+        Column(modifier = Modifier.weight(1f)) {
+            ItemList(items = order.items, modifier = Modifier.fillMaxSize())
+        }
+
+
+
 
 
 

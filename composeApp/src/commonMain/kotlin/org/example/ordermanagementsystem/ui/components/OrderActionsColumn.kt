@@ -37,22 +37,31 @@ fun OrderActionsColumn(
             .fillMaxWidth(),
 
     ){
-        labeledDropDown(
-            label = "Process To",
-            options = warehouseOptions,
-            selected = selectedWarehouse,
-            displayText = {"Warehouse $it" },
-            onSelected = onWarehouseChange,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        ){
+            labeledDropDown(
+                label = "Process To",
+                options = warehouseOptions,
+                selected = selectedWarehouse,
+                displayText = {"Warehouse $it" },
+                onSelected = onWarehouseChange,
+            )
             Button(
                 onClick =  onProcess ,
                 enabled = canProcess && selectedWarehouse != null,
             ) { Text("Process") }
+        }
+
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+
             Button(
                 onClick = { onComplete() },
                 enabled = canComplete,

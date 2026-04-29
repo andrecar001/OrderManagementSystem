@@ -32,12 +32,14 @@ fun <T> labeledDropDown(
     options: List<T>,
     displayText: (T) -> String,
     onSelected: (T) -> Unit,
+    modifier: Modifier = Modifier,
 ){
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
+        modifier = modifier,
     ) {
         OutlinedTextField(
             value = displayText(selected),

@@ -1,6 +1,7 @@
 package org.example.ordermanagementsystem.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,7 +43,11 @@ fun OrderDetailsRow(
                 .padding(16.dp)
 
         ) {
-            Text("🏠 ${order.warehouseNumber}, Order #️${order.orderNumber}, Stage: ${order.stage}, Items: ${order.items.size}, Total: 💲${order.totalPrice().toPriceString()}")
+            val orderType = when(order.type.lowercase()){
+                "pickup" -> "👜"
+                else -> "🚚"
+            }
+            Text("$orderType | 🏠 ${order.warehouseNumber}, Order #️${order.orderNumber}, Stage: ${order.stage}, Items: ${order.items.size}, Total: 💲${order.totalPrice().toPriceString()}")
 
             Text("📅 ${order.date.toFormattedDate()}")
         }
@@ -79,15 +84,17 @@ fun OrderListComponent(
         modifier = modifier
         .padding(16.dp)
     ) {
-        Row {
+        Row (
+//            horizontalArrangement = Arrangement.SpaceBetween,
+        ){
             Text(text = "Orders")
-            Spacer(modifier = Modifier.weight(1f).padding(16.dp))
+            Spacer(modifier = Modifier.weight(1f).padding(8.dp))
 
-            Button(onClick = onRefresh) {
-                Text("Refresh Orders")
+            Button(onClick = onRefresh, modifier = Modifier.padding(16.dp)) {
+                Text("Refresh List")
             }
 
-            Spacer(modifier = Modifier.weight(1f).padding(16.dp))
+            Spacer(modifier = Modifier.weight(1f).padding(8.dp))
             labeledDropDown(
                 label = "Filter",
                 selected = selectedWarehouseFilter,
@@ -95,7 +102,8 @@ fun OrderListComponent(
                 displayText = {
                     it?.let { "Warehouse $it" } ?: "All"
                 },
-                onSelected = onWarehouseChange
+                onSelected = onWarehouseChange,
+
             )
 
         }
