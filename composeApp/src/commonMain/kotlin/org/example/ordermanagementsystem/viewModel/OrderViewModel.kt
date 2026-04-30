@@ -110,6 +110,13 @@ class OrderViewModel (
         selectedWarehouseFilter = warehouse
     }
 
+    fun filterOrders(orders: List<Order>) : List<Order> {
+        return orders.filter {
+            selectedWarehouseFilter == null ||
+                    it.warehouseNumber == selectedWarehouseFilter
+        }
+    }
+
 
 
 }

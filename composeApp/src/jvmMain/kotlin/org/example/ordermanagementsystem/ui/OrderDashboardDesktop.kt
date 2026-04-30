@@ -45,10 +45,7 @@ fun OrderDashboardDesktop(viewModel: OrderViewModel) {
         }
 
         Row {
-            val filteredOrders = orders.filter {
-                viewModel.selectedWarehouseFilter == null ||
-                        it.warehouseNumber == viewModel.selectedWarehouseFilter
-            }
+            val filteredOrders = viewModel.filterOrders(orders)
             OrderListComponent(
                 orders = filteredOrders,
                 selectedWarehouseFilter = viewModel.selectedWarehouseFilter,
