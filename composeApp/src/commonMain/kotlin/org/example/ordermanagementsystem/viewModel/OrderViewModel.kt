@@ -11,12 +11,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
+/**
+ * Order view model
+ *
+ * @property repository
+ * @constructor loads the state from the repository
+ */
 class OrderViewModel (
     private val repository: OrderRepository
 ) : ViewModel() {
+
+    //List of orders that can be updated and used in a UI
     private val _orders = MutableStateFlow<List<Order>>(emptyList())
     val orders : StateFlow<List<Order>> = _orders
 
+    //Selected order for view model that can be called by a UI
     private val _selectedOrder = MutableStateFlow<Order?>(null)
     val selectedOrder: StateFlow<Order?> = _selectedOrder
 
@@ -31,33 +40,43 @@ class OrderViewModel (
         loadState()
 
     }
+
+    /**
+     * Load state from the instance's repository
+     *
+     */
     fun loadState() {
         viewModelScope.launch {
             _orders.value = repository.loadOrders()
         }
     }
 
+    /**
+     * Load incoming orders from repository
+     *
+     */
     fun loadIncomingOrders() {
         viewModelScope.launch {
             _orders.value = repository.mergeIncomingOrders()
         }
     }
 
+    /**
+     * Set the view models selected order
+     *
+     * @param order
+     */
     fun selectOrder(order: Order) {
         _selectedOrder.value = order
     }
 
-
-   /* private fun updateOrders(transform: (List<Order>) -> List<Order>) {
-        val updatedList = transform(_orders.value)
-
-        _orders.value = updatedList
-
-        viewModelScope.launch{
-            repository.saveOrders(updatedList)
-        }
-    }*/
-
+    /**
+     * Update order and save changes to the repository
+     *
+     * @param orderNumber
+     * @param transform function from Order to apply change
+     * @receiver
+     */
     private fun updateOrder(orderNumber: Int, transform: (Order) -> Order) {
         val updatedList = _orders.value.map { order ->
             if (order.orderNumber == orderNumber) transform(order)
@@ -70,46 +89,35 @@ class OrderViewModel (
         viewModelScope.launch{repository.saveOrders(updatedList)}
     }
 
-    fun getOrder(orderNumber: Int): Order? {
-        return _orders.value.find { it.orderNumber == orderNumber }
-    }
-    fun changeWarehouse(orderNumber: Int, newWarehouse: Int) {
-        _orders.value = _orders.value.map { order ->
-            if(order.orderNumber == orderNumber) {
-                order.copy(warehouseNumber = newWarehouse)
-            } else order
-        }
-    }
+
+
     fun processOrder(orderNumber: Int, warehouseNumber: Int) {
 
         updateOrder(orderNumber) { it.process(warehouseNumber) }
     }
+
     fun completeOrder(orderNumber: Int) {
         updateOrder(orderNumber) { it.complete() }
     }
+
     fun cancelOrder(orderNumber: Int) {
         updateOrder(orderNumber) { it.cancel() }
     }
+
     fun reinstateOrder(orderNumber: Int) {
         updateOrder(orderNumber) { it.reinstate() }
     }
 
-    fun canProcess(order: Order): Boolean =
-        order.stage == "incoming"
-
-    fun canComplete(order: Order): Boolean =
-        order.stage == "in progress"
-
-    fun canCancel(order: Order): Boolean =
-        order.stage == "incoming" ||
-                order.stage == "in progress"
-
-    fun canReinstate(order: Order): Boolean =
-        order.stage == "canceled"
     fun setWarehouseFilter(warehouse: Int?) {
         selectedWarehouseFilter = warehouse
     }
 
+    /**
+     * Filter orders by the instances currently selected warehouse
+     *
+     * @param orders
+     * @return
+     */
     fun filterOrders(orders: List<Order>) : List<Order> {
         return orders.filter {
             selectedWarehouseFilter == null ||

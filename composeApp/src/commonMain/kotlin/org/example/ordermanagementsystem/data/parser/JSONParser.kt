@@ -4,6 +4,13 @@ import kotlinx.serialization.json.Json
 import org.example.ordermanagementsystem.data.data_transfer_objects.JSONOrderWrapper
 import org.example.ordermanagementsystem.domain.model.Item
 
+/**
+ *
+ * JSON to be used as a OrderParser
+ *
+ * @property json
+ * @constructor Create empty J s o n parser
+ */
 class JSONParser(
     private val json: Json
 ) : OrderParser {
