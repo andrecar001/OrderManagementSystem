@@ -9,23 +9,44 @@ import kotlin.test.*
 
 class JSONParserTest () {
    val json = Json {
-    //  encodeDefaults = true
       ignoreUnknownKeys = true
    }
    var parser = JSONParser(json)
 
+    var content =
+    """
+    {
+        "order": {
+        "type": "ship",
+        "order_date": 1711111111111,
+        "items": [
+        {
+            "name": "Desk",
+            "quantity": 1,
+            "price": 199.99
+        }
+        ]
+    }
+    }"""
+
    @Test
-   fun canParse_JSONFileExtension_ReturnTrue() {
+   fun canParse_JSONFileExtension_ReturnsTrue() {
       val fileName = "order1.json"
       assertTrue(parser.canParse(fileName))
-      //assertTrue(fileName.endsWith(".json"))
    }
 
+    @Test
+    fun parse_ValidContent_ReturnsParsedOrder() {
+        var newParsedOrder = parser.parse(content)
 
-   // val dto = json.decodeFromString<JSONOrderWrapper>(content)
+        println("ParsedOrder: $newParsedOrder")
+    }
+    @Test
+    fun parse_InvalidContent_ThrowsException() {
+        assertFails(
+            message = "Invalid Content Argument",
+            block = {parser.parse("no_content")})
 
-
-     // override fun canParse(fileName: String) =
-    //     fileName.endsWith(".json")
+    }
 
 }

@@ -56,6 +56,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation("io.mockk:mockk:1.9.3")
         }
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
