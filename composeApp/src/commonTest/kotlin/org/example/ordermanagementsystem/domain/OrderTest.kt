@@ -26,9 +26,9 @@ class OrderTest {
 
 
 
-    // totalPrice
+    // totalPrice()
     @Test
-    fun totalPrice_ReturnsCorrectOrderTotal() {
+    fun totalPrice_ReturnCorrectOrderTotal() {
         assertEquals(122.00, incomingOrder.totalPrice())
     }
 
