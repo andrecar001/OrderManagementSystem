@@ -40,6 +40,7 @@ class JSONParserTest () {
         var newParsedOrder = parser.parse(content)
 
         println("ParsedOrder: $newParsedOrder")
+        assertTrue(newParsedOrder is ParsedOrder)
     }
     @Test
     fun parse_InvalidContent_ThrowsException() {
